@@ -1,4 +1,0 @@
-allow from all
-AuthName sysadmin-only
-Require valid-user
-AuthType Basic

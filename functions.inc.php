@@ -1,8 +1,4 @@
-<?php /* $Id */
-//
-
-
-
+<?php
 
 function trunkbalance_list() {
 	$allowed = array(array('trunkbalance_id' => 0, 'description' => _("None")));
@@ -142,4 +138,3 @@ function trunkbalance_hookGet_config($engine) {
 
 
 }
-?>

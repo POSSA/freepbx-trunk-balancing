@@ -245,6 +245,9 @@ if (substr($name,0,4)=='BAL_') //balanced trunk
 			case 'iax':
 				$channel_filter='IAX2/'.$destrunk_channelid.'%';
 				break;
+			case 'dahdi':
+				$channel_filter='DAHDI/'.$destrunk_channelid.'%';
+				break;
 			default: $channel_filter=$destrunk_channelid;;
 			}
 
@@ -265,6 +268,7 @@ if (substr($name,0,4)=='BAL_') //balanced trunk
 			if ($maxnumber>$numberofcall)
 				{ 
 				$AGI->verbose("$maxnumber max calls. This trunk has now only $numberofcall calls - Rule passed", 3);
+				$AGI->verbose($sql, 3);
 				} else
 				{
 				$AGI->verbose("$maxnumber max calls. This trunk has now $numberofcall calls - Rule failed", 3);
@@ -282,6 +286,7 @@ if (substr($name,0,4)=='BAL_') //balanced trunk
 			if ($maxidentical>$numberofdiffcall)
 				{ 
 				$AGI->verbose("$maxidentical max different calls. This trunk has now only $numberofdiffcall calls - Rule passed", 3);
+				$AGI->verbose($sql);
 				} else
 				{
 				$AGI->verbose("$maxidentical max different calls. This trunk has now $numberofdiffcall calls - Rule failed", 3);

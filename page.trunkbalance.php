@@ -1,9 +1,4 @@
-<?php /* $Id */
-// TrunkBalance
-// (c) Patrick
-//
-//$module_info = xml2array("modules/trunkbalance/module.xml");
-
+<?php 
 
 isset($_REQUEST['action'])?$action = $_REQUEST['action']:$action='';
 
