@@ -1,14 +1,15 @@
 <module>
 	<rawname>trunkbalance</rawname>
 	<name>Trunk Balance</name>
-	<version>0.0.4.2</version>
+	<version>0.0.4.3</version>
 	<publisher>projects.colsolgrp.net</publisher>
 		<candisable>yes</candisable>
 	<canuninstall>yes</canuninstall>
 	<type>setup</type>
 	<category>Third Party Addon</category>
 	<changelog>
-              *0.0.4.2* bug fix
+		*0.0.4.3* Allow balance of DAHDI trunks
+		*0.0.4.2* bug fix
 		*0.0.4.1* added timeconditions module dependency
 		*0.0.4* added time condition
 		*0.0.3.3* bug fix
