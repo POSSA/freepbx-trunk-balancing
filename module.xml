@@ -20,7 +20,7 @@
 	</changelog>	
 	<depends>
 		<module>core</module>
-              <version>ge2.6</version>
+              <version>lt 2.10.0alpha0</version>
               <module>timeconditions ge2.6</module>
 	</depends>
 	<description>Allow to balance your outbound calls between different trunks</description>
