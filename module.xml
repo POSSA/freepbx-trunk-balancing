@@ -2,11 +2,11 @@
 	<rawname>trunkbalance</rawname>
 	<name>Trunk Balance</name>
 	<version>0.0.4.3</version>
-	<publisher>projects.colsolgrp.net</publisher>
-		<candisable>yes</candisable>
+	<publisher>POSSA</publisher>
+	<candisable>yes</candisable>
 	<canuninstall>yes</canuninstall>
 	<type>setup</type>
-	<category>Third Party Addon</category>
+	<category>Other</category>
 	<changelog>
 		*0.0.4.3* Allow balance of DAHDI trunks
 		*0.0.4.2* bug fix
@@ -27,7 +27,7 @@
 	<menuitems>
 		<trunkbalance>Trunk Balance</trunkbalance>
 	</menuitems>
-	<info>http://projects.colsolgrp.net/wiki/trunkbalance/User_Manual</info>
-	<location>http://projects.colsolgrp.net/projects/list_files/trunkbalance</location>
+	<info>https://github.com/POSSA/freepbx-trunk-balancing/wiki</info>
+	<location>https://github.com/POSSA/freepbx-trunk-balancing/</location>
 
 </module>
