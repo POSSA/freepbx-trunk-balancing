@@ -27,14 +27,12 @@ $name=$res[0]['name'];
 if (substr($name,0,4)=='BAL_') //balanced trunk
 	{
 	$name=substr($name,4);
-	//$AGI->verbose("name is $name", 3);
-
 	$trunkallowed=true;
 	$AGI->verbose("This trunk $name is balanced. Evaluating rules", 3);
 	$sql='SELECT * FROM `trunkbalance` WHERE description=\''.$name.'\'';
 	$baltrunk = $db->sql($sql,'ASSOC');
 	$desttrunk=$baltrunk[0]['desttrunk_id'];
-       $timegroup=$baltrunk[0]['timegroup_id'];
+	$timegroup=$baltrunk[0]['timegroup_id'];
 	$maxnumber=$baltrunk[0]['maxnumber'];
 	$maxidentical=$baltrunk[0]['maxidentical'];
 	$maxtime=$baltrunk[0]['maxtime'];
@@ -175,7 +173,7 @@ if (substr($name,0,4)=='BAL_') //balanced trunk
 	    $AGI->verbose("Time condition failed", 3);
          }
 	}
-
+// end timegroup check
 
 
 	if (($loadratio>1)&($trunkallowed))
@@ -260,7 +258,7 @@ if (substr($name,0,4)=='BAL_') //balanced trunk
 
 	
 		//test number of calls
-		if ($maxnumber>1)
+		if ($maxnumber>0)
 			{
 			$sql='SELECT COUNT(*) FROM `cdr` WHERE disposition=\'ANSWERED\' AND dstchannel LIKE \''.$channel_filter.'\''.$sqldate.$sqlpattern;
 			$query= $db2->sql($sql,'NUM');
@@ -278,7 +276,7 @@ if (substr($name,0,4)=='BAL_') //balanced trunk
 			}
 
 		//test number of different calls
-		if (($maxidentical>1) and ($trunkallowed))
+		if (($maxidentical>0) and ($trunkallowed))
 			{
 			$sql='SELECT COUNT(DISTINCT(dst)) FROM `cdr` WHERE disposition=\'ANSWERED\' AND dstchannel LIKE \''.$channel_filter.'\''.$sqldate.$sqlpattern;
 			$query= $db2->sql($sql,'NUM');
@@ -313,7 +311,6 @@ if (substr($name,0,4)=='BAL_') //balanced trunk
 			}
 
 		//limit date
-		
 		if (($trunkallowed) and ($endingdate!=='0000-00-00 00:00:00'))
 			{
 	 		if ($todaydate<strtotime($endingdate)) 

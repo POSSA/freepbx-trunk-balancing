@@ -1,10 +1,11 @@
-<?php 
+<?php
 
 isset($_REQUEST['action'])?$action = $_REQUEST['action']:$action='';
 
 //the item we are currently displaying
 isset($_REQUEST['itemid'])?$itemid=$_REQUEST['itemid']:$itemid='';
 
+// don't know what this line does - lg
 $dispnum = "trunkbalance"; //used for switch on config.php
 
 $tabindex = 0;
@@ -34,7 +35,7 @@ if(isset($_POST['action'])) {
 $trunkbalances = trunkbalance_list();
 ?>
 
-</div> <!-- end content div so we can display rnav properly-->
+
 
 <!-- right side menu -->
 <div class="rnav"><ul>
@@ -67,7 +68,7 @@ if ($action == 'delete') {
 				<input type=\"hidden\" name=\"display\" value=\"{$dispnum}\">
 				<input type=\"hidden\" name=\"itemid\" value=\"{$itemid}\">
 				<input type=\"hidden\" name=\"action\" value=\"delete\">
-				<input type=submit value=\""._("Delete Balanced Trunk")."\">
+				<input type=submit value=\""._("Delete Balanced Trunk: $thisItem[description]")."\">
 			</form>";
 	
 ?>
@@ -181,6 +182,8 @@ if ($action == 'delete') {
 
 	</table>
 
+<p align="center" style="font-size:11px;"><br>
+The module is maintained by the developer community at the <a target="_blank" href="https://github.com/POSSA/freepbx-trunk-balancing"> PBX Open Source Software Alliance</a><br></p>
 
 <script language="javascript">
 <!--
