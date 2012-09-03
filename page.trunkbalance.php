@@ -71,8 +71,17 @@ if ($action == 'delete') {
 				<input type=submit value=\""._("Delete Balanced Trunk: $thisItem[description]")."\">
 			</form>";
 	
-?>
 
+// check to see if user has automatic updates enabled
+$cm =& cronmanager::create($db);
+$online_updates = $cm->updates_enabled() ? true : false;
+
+// check if new version of module is available
+if ($online_updates && $foo = trunkbalance_vercheck()) {
+	print "<br>A <b>new version</b> of this module is available from the <a target='_blank' href='http://pbxossa.org'>PBX Open Source Software Alliance</a><br>";
+	}
+
+?>
 	<h2><?php echo ($itemid ? _("Balanced Trunk:")." ". $itemid : _("Add Balanced Trunk")); ?></h2>
 
 	<p style="width: 80%"><?php echo ($itemid ? '' : _("Each Balanced Trunk is an outbound trunk associated with a set of parameters to define the maximum use you want to do with it. For instance you have a provider that gives you 100 minutes long distance calls per month. You can define here that after 100 minutes of local call during the month this trunk will become unavailable and your route will switch to the next trunk in line.")); ?></p>

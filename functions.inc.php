@@ -133,8 +133,24 @@ function trunkbalance_hookGet_config($engine) {
 			
 		break;
 	}
-
-
-
-
 }
+
+	
+function trunkbalance_vercheck() {	
+	// compare version numbers of local module.xml and remote module.xml 
+	// returns true if a new version is available
+	$newver = false;
+	if ( function_exists(xml2array)){
+		$module_local = xml2array("modules/trunkbalance/module.xml");
+		$module_remote = xml2array("https://raw.github.com/POSSA/freepbx-trunk-balancing/master/module.xml");
+		if ( $foo= empty($module_local) or $bar = empty($module_remote) )
+			{
+			//  if either array is empty skip version check
+			}
+		else if ( $module_remote[module][version] > $module_local[module][version])
+			{
+			$newver = true;
+			}
+		return ($newver);
+		}
+	}
