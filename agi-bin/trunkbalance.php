@@ -13,7 +13,7 @@ $db = new AGIDB($AGI);
   
 
 if (!isset($argv[1])) {
-        $agi->verbose('Missing trunk info');
+        $AGI->verbose('Missing trunk info');
         exit(1);
 }
 
@@ -277,20 +277,50 @@ if (substr($name,0,4)=='BAL_') //balanced trunk
 
 		//test number of different calls
 		if (($maxidentical>0) and ($trunkallowed))
-			{
-			$sql='SELECT COUNT(DISTINCT(dst)) FROM `cdr` WHERE disposition=\'ANSWERED\' AND dstchannel LIKE \''.$channel_filter.'\''.$sqldate.$sqlpattern;
+		{
+			$sql='SELECT DISTINCT(dst) FROM `cdr` WHERE disposition=\'ANSWERED\' AND dstchannel LIKE \''.$channel_filter.'\''.$sqldate.$sqlpattern;
 			$query= $db2->sql($sql,'NUM');
-			$numberofdiffcall=$query[0][0];
+			$numberofdiffcall=count($query);
+			$exten = $AGI->request['agi_dnid']; 
+			
+			function in_multiarray($elem, $array)
+			{
+				$top = sizeof($array) - 1;
+				$bottom = 0;
+				while($bottom <= $top)
+				{
+					if($array[$bottom] == $elem)
+						return true;
+					else 
+						if(is_array($array[$bottom]))
+							if(in_multiarray($elem, ($array[$bottom])))
+								return true;
+							
+					$bottom++;
+				}        
+				return false;
+			}
+
 			if ($maxidentical>$numberofdiffcall)
-				{ 
+			{ 
 				$AGI->verbose("$maxidentical max different calls. This trunk has now only $numberofdiffcall calls - Rule passed", 3);
 				$AGI->verbose($sql);
-				} else
+			} 
+			else
+			{
+				// check to see if the dialled number is in the array $query and if so allow call otherwise deny
+				if (in_multiarray($exten,$query)) 
 				{
-				$AGI->verbose("$maxidentical max different calls. This trunk has now $numberofdiffcall calls - Rule failed", 3);
-				$trunkallowed=false;
+					$AGI->verbose("Dialled number $exten is already included in call count of $maxidentical - Rule passed", 3);
+					$trunkallowed=true;
+				}
+				else
+				{
+					$AGI->verbose("$maxidentical max different calls. This trunk has now $numberofdiffcall calls - Rule failed", 3);
+					$trunkallowed=false;
 				}
 			}
+		}
 
 
 		//duration of call
