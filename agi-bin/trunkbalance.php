@@ -316,7 +316,7 @@ if (substr($name,0,4)=='BAL_') //balanced trunk
 				}
 				else
 				{
-					$AGI->verbose("$maxidentical max different calls. This trunk has now $numberofdiffcall calls - Rule failed", 3);
+					$AGI->verbose("$maxidentical max different calls. This trunk has now $numberofdiffcall calls not including $exten - Rule failed", 3);
 					$trunkallowed=false;
 				}
 			}
