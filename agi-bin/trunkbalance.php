@@ -280,10 +280,10 @@ if (substr($name,0,4)=='BAL_') //balanced trunk
 		{
 			$sql='SELECT DISTINCT(dst) FROM `cdr` WHERE disposition=\'ANSWERED\' AND dstchannel LIKE \''.$channel_filter.'\''.$sqldate.$sqlpattern;
 			$query= $db2->sql($sql,'NUM');
-			$numberofdiffcall=count($query);
-			$exten = $AGI->request['agi_dnid']; 
+			$numberofdiffcall=count($query)-1;    //for some reason count is always 1 higher than actual prob because it's a 2D array
+			$exten = $AGI->request['agi_dnid'];   //AGI request to get the dialled digits
 			
-			function in_multiarray($elem, $array)
+			function in_multiarray($elem, $array)   //this function borrowed from stack overflow because in_array doesn't seem to work well on 2D arrays
 			{
 				$top = sizeof($array) - 1;
 				$bottom = 0;
