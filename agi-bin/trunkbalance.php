@@ -281,7 +281,11 @@ if (substr($name,0,4)=='BAL_') //balanced trunk
 			$sql='SELECT DISTINCT(dst) FROM `cdr` WHERE disposition=\'ANSWERED\' AND dstchannel LIKE \''.$channel_filter.'\''.$sqldate.$sqlpattern;
 			$query= $db2->sql($sql,'NUM');
 			$numberofdiffcall=count($query)-1;    //for some reason count is always 1 higher than actual prob because it's a 2D array
-			$exten = $AGI->request['agi_dnid'];   //AGI request to get the dialled digits
+			$exten = $AGI->request['agi_dnid'];   //AGI request to get the dialed digits
+			if (!is_numeric($exten))
+			{
+				$exten = NULL;		//agi request may not return a useful result so clear variable if not numeric
+			}
 			
 			function in_multiarray($elem, $array)   //this function borrowed from stack overflow because in_array doesn't seem to work well on 2D arrays
 			{
@@ -308,17 +312,23 @@ if (substr($name,0,4)=='BAL_') //balanced trunk
 			} 
 			else
 			{
-				// check to see if the dialled number is in the array $query and if so allow call otherwise deny
-				if (in_multiarray($exten,$query)) 
+				// check to see if the dialed number is in the array $query and if so allow call otherwise deny
+				if (!$exten)
 				{
-					$AGI->verbose("Dialled number $exten is already included in call count of $maxidentical - Rule passed", 3);
+					$AGI->verbose("Cannot determine dialed number and trunk has exceeded call count of $maxidentical - Rule failed", 3);
+					$trunkallowed=false;
+				}
+				else if (in_multiarray($exten,$query)) 
+				{
+					$AGI->verbose("Trunk has exceeded call count of $maxidentical but dialed number $exten is included in this count - Rule passed", 3);
 					$trunkallowed=true;
 				}
 				else
 				{
-					$AGI->verbose("$maxidentical max different calls. This trunk has now $numberofdiffcall calls not including $exten - Rule failed", 3);
+					$AGI->verbose("Trunk has exceeded call count of $maxidentical and dialed number $exten is not included in this count - Rule failed", 3);
 					$trunkallowed=false;
 				}
+				
 			}
 		}
 
