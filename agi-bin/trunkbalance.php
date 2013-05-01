@@ -13,7 +13,7 @@ $db = new AGIDB($AGI);
   
 
 if (!isset($argv[1])) {
-        $agi->verbose('Missing trunk info');
+        $AGI->verbose('Missing trunk info');
         exit(1);
 }
 
@@ -277,20 +277,71 @@ if (substr($name,0,4)=='BAL_') //balanced trunk
 
 		//test number of different calls
 		if (($maxidentical>0) and ($trunkallowed))
-			{
-			$sql='SELECT COUNT(DISTINCT(dst)) FROM `cdr` WHERE disposition=\'ANSWERED\' AND dstchannel LIKE \''.$channel_filter.'\''.$sqldate.$sqlpattern;
+		{
+			$sql='SELECT DISTINCT(dst) FROM `cdr` WHERE disposition=\'ANSWERED\' AND dstchannel LIKE \''.$channel_filter.'\''.$sqldate.$sqlpattern;
 			$query= $db2->sql($sql,'NUM');
-			$numberofdiffcall=$query[0][0];
+			$numberofdiffcall=count($query)-1;    //for some reason count is always 1 higher than actual prob because it's a 2D array
+//			$exten = $AGI->request['agi_dnid'];   
+
+			// AGI request to get the dialed digits
+			if ($AGI->request['agi_extension']=='s')
+			{
+				$exten = $AGI->request['agi_dnid'];
+			}
+			else
+			{
+				$exten = $AGI->request['agi_extension'];
+			}
+
+			if (!is_numeric($exten))
+			{
+				$exten = NULL;		//agi request may not return a useful result so clear variable if not numeric
+			}
+			
+			function in_multiarray($elem, $array)   //this function borrowed from stack overflow because in_array doesn't seem to work well on 2D arrays
+			{
+				$top = sizeof($array) - 1;
+				$bottom = 0;
+				while($bottom <= $top)
+				{
+					if($array[$bottom] == $elem)
+						return true;
+					else 
+						if(is_array($array[$bottom]))
+							if(in_multiarray($elem, ($array[$bottom])))
+								return true;
+							
+					$bottom++;
+				}        
+				return false;
+			}
+
 			if ($maxidentical>$numberofdiffcall)
-				{ 
+			{ 
 				$AGI->verbose("$maxidentical max different calls. This trunk has now only $numberofdiffcall calls - Rule passed", 3);
 				$AGI->verbose($sql);
-				} else
+			} 
+			else
+			{
+				// check to see if the dialed number is in the array $query and if so allow call otherwise deny
+				if (!$exten)
 				{
-				$AGI->verbose("$maxidentical max different calls. This trunk has now $numberofdiffcall calls - Rule failed", 3);
-				$trunkallowed=false;
+					$AGI->verbose("Cannot determine dialed number and trunk has exceeded call count of $maxidentical - Rule failed", 3);
+					$trunkallowed=false;
 				}
+				else if (in_multiarray($exten,$query)) 
+				{
+					$AGI->verbose("Trunk has exceeded call count of $maxidentical but dialed number $exten is included in this count - Rule passed", 3);
+					$trunkallowed=true;
+				}
+				else
+				{
+					$AGI->verbose("Trunk has exceeded call count of $maxidentical and dialed number $exten is not included in this count - Rule failed", 3);
+					$trunkallowed=false;
+				}
+				
 			}
+		}
 
 
 		//duration of call
