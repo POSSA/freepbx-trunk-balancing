@@ -13,7 +13,7 @@ $db = new AGIDB($AGI);
   
 
 if (!isset($argv[1])) {
-        $AGI->verbose('Missing trunk info');
+        $AGI->verbose('Missing trunk info',3);
         exit(1);
 }
 
