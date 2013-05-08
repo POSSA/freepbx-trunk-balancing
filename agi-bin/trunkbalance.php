@@ -17,7 +17,30 @@ if (!isset($argv[1])) {
         exit(1);
 }
 
-$trunk = $argv[1];
+// get arguements passed to agi
+$trunk = $argv[1];            // asterisk ${ARG1} is the trunk number
+
+// if $exten is not passed as an arguement then use AGI request to attempt to get the dialed digits
+if (isset($argv[2]))
+	{
+		$exten = $argv[2];            // asterisk ${ARG2} is the $exten number passed to the dialout macro
+	}
+	else
+	{
+		if ($AGI->request['agi_extension']=='s')
+		{
+			$exten = $AGI->request['agi_dnid'];
+		}
+		else
+		{
+			$exten = $AGI->request['agi_extension'];
+		}
+
+		if (!is_numeric($exten))
+		{
+			$exten = NULL;		//agi request may not return a useful result so clear variable if not numeric
+		}
+	}
 
 $sql='SELECT * FROM `trunks` WHERE trunkid=\''.$trunk.'\'';
 $res = $db->sql($sql,'ASSOC');
@@ -281,23 +304,7 @@ if (substr($name,0,4)=='BAL_') //balanced trunk
 			$sql='SELECT DISTINCT(dst) FROM `cdr` WHERE disposition=\'ANSWERED\' AND dstchannel LIKE \''.$channel_filter.'\''.$sqldate.$sqlpattern;
 			$query= $db2->sql($sql,'NUM');
 			$numberofdiffcall=count($query)-1;    //for some reason count is always 1 higher than actual prob because it's a 2D array
-//			$exten = $AGI->request['agi_dnid'];   
 
-			// AGI request to get the dialed digits
-			if ($AGI->request['agi_extension']=='s')
-			{
-				$exten = $AGI->request['agi_dnid'];
-			}
-			else
-			{
-				$exten = $AGI->request['agi_extension'];
-			}
-
-			if (!is_numeric($exten))
-			{
-				$exten = NULL;		//agi request may not return a useful result so clear variable if not numeric
-			}
-			
 			function in_multiarray($elem, $array)   //this function borrowed from stack overflow because in_array doesn't seem to work well on 2D arrays
 			{
 				$top = sizeof($array) - 1;

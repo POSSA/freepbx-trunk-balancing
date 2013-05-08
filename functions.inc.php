@@ -129,7 +129,7 @@ function trunkbalance_hookGet_config($engine) {
 	global $ext;
 	switch($engine) {
 		case "asterisk":
-			$ext->splice('macro-dialout-trunk','s',1, new ext_agi('trunkbalance.php,${ARG1}'));			
+			$ext->splice('macro-dialout-trunk','s',1, new ext_agi('trunkbalance.php,${ARG1},${ARG2}'));			
 			
 		break;
 	}
