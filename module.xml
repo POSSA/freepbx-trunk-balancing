@@ -1,13 +1,14 @@
 <module>
 	<rawname>trunkbalance</rawname>
 	<name>Trunk Balance</name>
-	<version>1.0.1</version>
+	<version>1.0.2</version>
 	<publisher>POSSA</publisher>
 	<candisable>yes</candisable>
 	<canuninstall>yes</canuninstall>
 	<type>setup</type>
 	<category>Other</category>
 	<changelog>
+		*1.0.2* pass dialed number directly to dialout macro
 		*1.0.1* fixed max unique call logic
 		*1.0.0* revised to work with FreePBX 2.10
 		*0.0.4.3* Allow balance of DAHDI trunks and move to Github
