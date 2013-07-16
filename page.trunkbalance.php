@@ -188,16 +188,11 @@ if ($online_updates && $foo = trunkbalance_vercheck()) {
 	<tr><td colspan="2"><h5>Usage Limits Configuration<hr></h5></td></tr>
 	<tr>
 		<td><a href="#" class="info"><?php echo _("Include Inbound Calls:")?><span><?php echo _("Outbound calls are counted automatically, enable this setting to include inbound calls when determining usage limits.")?></span></a></td>
-		<td><input type="checkbox"
-			name="count_inbound"
-			value="<?php echo (isset($thisItem['count_inbound']) ? $thisItem['count_inbound'] : ''); ?>"
-			tabindex="<?php echo ++$tabindex;?>"
-			<?php echo (isset($thisItem['count_inbound']) ? "checked" : ''); ?> >
-			</td>
+		<td><input type="checkbox"  name="count_inbound" <?php echo (($thisItem['count_inbound'] == "on") ? "checked" : "") ; ?> tabindex="<?php echo ++$tabindex;?>"></td>
 	</tr>
 	<tr>
 		<td><a href="#" class="info"><?php echo _("Include Unanswered Calls:")?><span><?php echo _("Answered calls are counted automatically, enable this setting to include unanswered calls when determining usage limits.")?></span></a></td>
-		<td><input type="checkbox" name="count_unanswered" value="<?php echo (isset($thisItem['count_unanswered']) ? $thisItem['count_unanswered'] : ''); ?>" tabindex="<?php echo ++$tabindex;?>"></td>
+		<td><input type="checkbox" name="count_unanswered" <?php echo (($thisItem['count_unanswered'] == "on") ? "checked" : "") ; ?> tabindex="<?php echo ++$tabindex;?>"></td>
 	</tr>	
 	<tr>
 		<td><a href="#" class="info"><?php echo _("Maximum inbound/outbound Calling Time:")?><span><?php echo _("Enter the maximum total number of calling minutes per billing period. Be aware that the test is performed before the begining of the call and it will not break an active call.")?></span></a></td>
