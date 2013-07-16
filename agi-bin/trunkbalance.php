@@ -55,63 +55,68 @@ if (substr($name,0,4)=='BAL_') //balanced trunk
 	$sql='SELECT * FROM `trunkbalance` WHERE description=\''.$name.'\'';
 	$baltrunk = $db->sql($sql,'ASSOC');
 	$desttrunk=$baltrunk[0]['desttrunk_id'];
-	$timegroup=$baltrunk[0]['timegroup_id'];
-	$maxnumber=$baltrunk[0]['maxnumber'];
-	$maxidentical=$baltrunk[0]['maxidentical'];
-	$maxtime=$baltrunk[0]['maxtime'];
-	$billingday=$baltrunk[0]['billingday'];
-	$billingperiod=$baltrunk[0]['billingperiod'];
-	$endingdate=$baltrunk[0]['endingdate'];
+//	description not needed
 	$dialpattern=$baltrunk[0]['dialpattern'];
 	$notdialpattern=$baltrunk[0]['notdialpattern'];
-	//test ratio
+	$billing_cycle=$baltrunk[0]['billing_cycle'];
+	$billingtime[0]['billingtime'];
+	$billing_day=$baltrunk[0]['billing_day'];
+	$billingdate=$baltrunk[0]['billingdate'];
+	$billingperiod=$baltrunk[0]['billingperiod'];
+	$endingdate=$baltrunk[0]['endingdate'];
+	$count_inbound=$baltrunk[0]['count_inbound'];
+	$count_unanswered=$baltrunk[0]['count_unanswered'];
 	$loadratio=$baltrunk[0]['loadratio'];
+	$maxtime=$baltrunk[0]['maxtime'];
+	$maxnumber=$baltrunk[0]['maxnumber'];
+	$maxidentical=$baltrunk[0]['maxidentical'];
+	$timegroup=$baltrunk[0]['timegroup_id'];
 	$todaydate=gettimeofday(true);
 	$today=getdate();
 
-       if ($timegroup>0) // check the time group condition
-       { 
-	   $daynames = array("sun"=>0, "mon"=>1, "tue"=>2, "wed"=>3, "thu"=>4, "fri"=>5, "sat"=>6); 
-          $monthnames= array ("jan"=>1, "feb"=>2, "mar"=>3, "apr"=>4, "may"=>5, "jun"=>6, "jul"=>7, "aug"=>8, "sep"=>9, "oct"=>10, "nov"=>11, "dec"=>12);
-          $timegroupcondition=false;
-          $sql='SELECT * FROM `timegroups_details` WHERE timegroupid=\''.$timegroup.'\'';
-          $res = $db->sql($sql,'ASSOC');
-	   if(is_array($res))
-	   {
-		foreach($res as $timegroupdetail)
+	if ($timegroup>0) // check the time group condition
+    { 
+		$daynames = array("sun"=>0, "mon"=>1, "tue"=>2, "wed"=>3, "thu"=>4, "fri"=>5, "sat"=>6); 
+		$monthnames= array ("jan"=>1, "feb"=>2, "mar"=>3, "apr"=>4, "may"=>5, "jun"=>6, "jul"=>7, "aug"=>8, "sep"=>9, "oct"=>10, "nov"=>11, "dec"=>12);
+		$timegroupcondition=false;
+		$sql='SELECT * FROM `timegroups_details` WHERE timegroupid=\''.$timegroup.'\'';
+		$res = $db->sql($sql,'ASSOC');
+		if(is_array($res))
 		{
-		   $timedetail=$timegroupdetail['time'];
-                 $timecondition=true;
-		   if ($timedetail<>'')
-                 {
+			foreach($res as $timegroupdetail)
+		{
+		$timedetail=$timegroupdetail['time'];
+		$timecondition=true;
+		if ($timedetail<>'')
+		{
 			$AGI->verbose("  Timedetail: $timedetail ", 4);
 			list($condtimerange,$conddaysweek,$conddaysmonth,$condmonths)=explode("|",$timedetail);
 			
 			if ($condmonths<>'*')
 			{ 
-			  $startmonth='';
-			  $endmonth='';
-			  list($startmonth,$endmonth)=explode("-",$condmonths);
-			  if ($endmonth=='') {$endmonth=$startmonth;}
-			  $endmonthnum=$monthnames[$endmonth];
-			  $startmonthnum=$monthnames[$startmonth];
+				$startmonth='';
+				$endmonth='';
+				list($startmonth,$endmonth)=explode("-",$condmonths);
+				if ($endmonth=='') {$endmonth=$startmonth;}
+				$endmonthnum=$monthnames[$endmonth];
+				$startmonthnum=$monthnames[$startmonth];
 
-			  if ((($endmonthnum<$today[mon])&($today[mon]<$startmonthnum)) or
+				if ((($endmonthnum<$today[mon])&($today[mon]<$startmonthnum)) or
                           (($endmonthnum>=$startmonthnum)& (($today[mon]<$startmonthnum)or($today[mon]>$endmonthnum))))
-                       {
-                         $AGI->verbose("     month condition '$condmonths' failed", 4);
-			    $timecondition=false;
-			  } else
-                       {
-			    $AGI->verbose("     month condition '$condmonths' passed", 4);
-			  } 
+				{
+					$AGI->verbose("     month condition '$condmonths' failed", 4);
+					$timecondition=false;
+				} else
+                {
+					$AGI->verbose("     month condition '$condmonths' passed", 4);
+				} 
 
 			}
 
 			if ($conddaysmonth<>'*')
 			{
-			  $startdate=0;
-			  $enddate=0;
+				$startdate=0;
+				$enddate=0;
 			  list($startdate,$enddate)=explode("-",$conddaysmonth);
 			  if ($enddate==0) { $enddate=$startdate;}
                        if ((($enddate<$today[mday])&($today[mday]<$startdate)) or
@@ -202,56 +207,90 @@ if (substr($name,0,4)=='BAL_') //balanced trunk
 	if (($loadratio>1)&($trunkallowed))
 	{
 		$randnum=rand(1,$loadratio);
-		if ($randnum==1)
-			{
-			$AGI->verbose("Balance ratio rule of 1:$loadratio. $randnum was pooled. Rule passed", 3);
-
+		if ($randnum==1) {
+				$AGI->verbose("Balance ratio rule of 1:$loadratio. $randnum was pooled. Rule passed", 3);
 			} else
 			{
-			$AGI->verbose("Balance ratio rule of 1:$loadratio. $randnum was pooled. Rule failed", 3);
-			$trunkallowed=false;
-
+				$AGI->verbose("Balance ratio rule of 1:$loadratio. $randnum was pooled. Rule failed", 3);
+				$trunkallowed=false;
 			} 
 	}
 
 	if ($trunkallowed) //to save time, if the call is already denied ignore the following
 	{
 		$sqldate='';
-		if ($billingday>0)
-			{
-			//get the date of the billing period
-			$diff= $billingday - (date("j",$todaydate));
-			$stringdate=(date("Y-m-",$todaydate)).$billingday;
-			if ($diff>0)
-				{
-				$billingdate=strtotime($stringdate. " - 1 month");
-				} else
-				{
-				$billingdate=strtotime($stringdate);
-				}
-			
-			$stringdate=date("Y-m-d 00:00",$billingdate);
-			$AGI->verbose("billing date $stringdate", 3);
-			$sqldate=' AND calldate>\''.$stringdate.'\'';
+		if ($billing_cycle != -1)
+		{
+			//determine starting date/time of the billing period
+			switch ($billing_cycle) {
+				case "daily":
+					$diff= (date("i",$billingtime) - (date("N",$todaydate));
+					$stringdate=(date("Y-m-",$todaydate)).$billing_day;
+					if ($diff>0)
+					{
+						$billingdate=strtotime($stringdate. " - 1 day");
+					} else
+					{
+						$billingdate=strtotime($stringdate);
+					}
+					
+					$stringdate=date("Y-m-d 00:00",$billingdate);
+					$AGI->verbose("billing date $stringdate", 3);
+					$sqldate=' AND calldate>\''.$stringdate.'\'';				
+				break;
+				
+				case "weekly":
+					$diff= $billing_day - (date("N",$todaydate));
+					$stringdate=(date("Y-m-",$todaydate)).$billing_day;
+					if ($diff>0)
+					{
+						$billingdate=strtotime($stringdate. " - 1 week");
+					} else
+					{
+						$billingdate=strtotime($stringdate);
+					}
+					
+					$stringdate=date("Y-m-d 00:00",$billingdate);
+					$AGI->verbose("billing date $stringdate", 3);
+					$sqldate=' AND calldate>\''.$stringdate.'\'';
+				break;
+				
+				case "monthly":
+					$diff= $billing_date - (date("j",$todaydate));
+					$stringdate=(date("Y-m-",$todaydate)).$billing_date;
+					if ($diff>0)
+					{
+						$billingdate=strtotime($stringdate. " - 1 month");
+					} else
+					{
+						$billingdate=strtotime($stringdate);
+					}
+					
+					$stringdate=date("Y-m-d 00:00",$billingdate);
+					$AGI->verbose("billing date $stringdate", 3);
+					$sqldate=' AND calldate>\''.$stringdate.'\'';
+				break;
+				
+				case "floating";
+					//get the beginning date of the period
+					$AGI->verbose("billing period $billingperiod", 3);
+					$sqldate=' AND calldate>=DATE_SUB(curdate(), INTERVAL '.$billingperiod.' HOUR)';
+				break;
 			}
-		if ($billingperiod>0)
-			{
-			//get the begining date of the period
-			$AGI->verbose("billing period $billingperiod", 3);
-			$sqldate=' AND calldate>=DATE_SUB(curdate(), INTERVAL '.$billingperiod.' DAY)';
-			}
-		
+				
+				
+		}
+
+		// apply user supplied patterns to query
 		$sqlpattern='';
 		if ($dialpattern!=='')
-			{
+		{
 			$sqlpattern=' AND dst LIKE \''.$dialpattern.'\'';
-			}
+		}
 		if ($notdialpattern!=='')
-			{
+		{
 			$sqlpattern=$sqlpattern.' AND dst NOT LIKE \''.$notdialpattern.'\'';
-			}
-
-	
+		}
 
 		// load info from the destination trunk
 		$sql='SELECT * FROM `trunks` WHERE trunkid=\''.$desttrunk.'\'';
@@ -259,7 +298,7 @@ if (substr($name,0,4)=='BAL_') //balanced trunk
 		$destrunk_tech=$res[0]['tech'];
 		$destrunk_channelid=$res[0]['channelid'];
 		switch ($destrunk_tech)
-			{
+		{
 			case 'sip':
 				$channel_filter='SIP/'.$destrunk_channelid.'%';
 				break;
@@ -270,7 +309,7 @@ if (substr($name,0,4)=='BAL_') //balanced trunk
 				$channel_filter='DAHDI/'.$destrunk_channelid.'%';
 				break;
 			default: $channel_filter=$destrunk_channelid;;
-			}
+		}
 
 		
 		//$AGI->verbose("channel_filter $channel_filter", 3);

@@ -8,12 +8,11 @@ global $amp_conf;
 $autoincrement = (($amp_conf["AMPDBENGINE"] == "sqlite") || ($amp_conf["AMPDBENGINE"] == "sqlite3")) ? "AUTOINCREMENT":"AUTO_INCREMENT";
 
 $cols['desttrunk_id'] = "trunkbalance_id INTEGER NOT NULL PRIMARY KEY $autoincrement";
-$cols['desttrunk_id'] = "INTEGER default '0'";
 $cols['description'] = "varchar(50) default NULL";
 $cols['dialpattern'] = "varchar(255) default NULL";
 $cols['notdialpattern'] = "varchar(255) default NULL";
 $cols['billing_cycle'] = "varchar(50) default NULL";
-$cols['billingtime'] = "datetime default NULL";
+$cols['billingtime'] = "time default NULL";
 $cols['billing_day'] = "varchar(50) default NULL";
 $cols['billingdate'] = "SMALLINT default '0'";
 $cols['billingperiod'] = "INT default '0'";
