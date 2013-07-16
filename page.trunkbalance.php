@@ -162,7 +162,8 @@ if ($online_updates && $foo = trunkbalance_vercheck()) {
 	<tr>
 		<td><a href="#" class="info"><?php echo _("Billing Day:")?><span><?php echo _("Enter the day of the week to reset the counter. Only used for weekly billing cycle.")?></span></a></td>
 		
-		<td><SELECT id="billing_cycle" name="billing_cycle" tabindex="<?php echo ++$tabindex;?>"><OPTION VALUE="-1">none selected</option>
+		<td><SELECT id="billing_day" name="billing_day" tabindex="<?php echo ++$tabindex;?>">
+			<OPTION VALUE="-1">none selected</option>
 			<OPTION VALUE="sunday">Sunday</OPTION>
 			<OPTION VALUE="monday">Monday</OPTION>
 			<OPTION VALUE="tuesday">Tuesday</OPTION>

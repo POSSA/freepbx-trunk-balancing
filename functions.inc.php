@@ -13,7 +13,8 @@ function trunkbalance_list() {
 
 function trunkbalance_listtrunk() {
 	$allowed = array(array('trunkid' => 0, 'name' => _("None"), 'tech' => _("None")));
-	$sqlr = "SELECT * FROM `trunks` WHERE (name NOT LIKE 'BAL_%') AND (tech!='enum' AND tech!='dundi') ORDER BY tech, name";
+//	$sqlr = "SELECT * FROM `trunks` WHERE (name NOT LIKE 'BAL_%') AND (tech!='enum' AND tech!='dundi') ORDER BY tech, name";
+	$sqlr = "SELECT * FROM `trunks` WHERE (name NOT LIKE 'BAL_%') AND (tech!='enum' AND tech!='dundi' AND tech != 'dahdi') or (tech = 'dahdi' AND channelid  REGEXP '^[0-9]*$' )  ORDER BY tech, name";
 	$results = sql($sqlr,"getAll",DB_FETCHMODE_ASSOC);
 	if(is_array($results)){
 		foreach($results as $result){
