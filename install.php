@@ -7,6 +7,7 @@ global $amp_conf;
 
 $autoincrement = (($amp_conf["AMPDBENGINE"] == "sqlite") || ($amp_conf["AMPDBENGINE"] == "sqlite3")) ? "AUTOINCREMENT":"AUTO_INCREMENT";
 
+$cols['desttrunk_id'] = "trunkbalance_id INTEGER NOT NULL PRIMARY KEY $autoincrement";
 $cols['desttrunk_id'] = "INTEGER default '0'";
 $cols['description'] = "varchar(50) default NULL";
 $cols['dialpattern'] = "varchar(255) default NULL";
@@ -30,20 +31,7 @@ $cols['timegroup_id'] = "INTEGER default '-1'";
 
 // create the tables
 $sql = "CREATE TABLE IF NOT EXISTS `trunkbalance` (
-	trunkbalance_id INTEGER NOT NULL PRIMARY KEY $autoincrement,
-	desttrunk_id INTEGER default '0',
-	description varchar(50) default NULL,
-	dialpattern varchar(255) default NULL,
-	notdialpattern varchar(255) default NULL,
-	billingday SMALLINT default '0',
-	billingperiod SMALLINT default '0',
-	endingdate datetime default NULL,
-	loadratio INTEGER default '1',
-	maxtime INTEGER default '-1',
-	maxnumber INTEGER default '-1',
-	maxidentical INTEGER default '-1',
-       timegroup_id INTEGER default '-1'
-);";
+	trunkbalance_id INTEGER NOT NULL PRIMARY KEY $autoincrement);";
 $check = $db->query($sql);
 if (DB::IsError($check)) {
         die_freepbx( "Can not create `trunkbalance` table: " . $check->getMessage() .  "\n");

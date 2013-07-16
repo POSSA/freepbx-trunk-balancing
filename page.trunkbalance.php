@@ -149,10 +149,10 @@ if ($online_updates && $foo = trunkbalance_vercheck()) {
 	<tr><td colspan="2"><h5>Billing Cycle Configuration<hr></h5></td></tr>
 		<td><a href="#" class="info"><?php echo _("Choose billing cycle:")?><span><?php echo _("Choose the time period that the billing cycle will resest to")?></span></a></td>
 		<td><SELECT id="billing_cycle" name="billing_cycle" tabindex="<?php echo ++$tabindex;?>"><OPTION VALUE="-1">none selected</option>
-		<OPTION VALUE="day">Floating</OPTION>
-		<OPTION VALUE="day">Day</OPTION>
-		<OPTION VALUE="week">Week</OPTION>
-		<OPTION VALUE="month">Month</OPTION>
+		<OPTION VALUE="floating" <?php if ($thisItem['billing_cycle']=="floating") echo _("selected=\"selected\""); ?>  >Floating</OPTION>
+		<OPTION VALUE="day" <?php if ($thisItem['billing_cycle']=="day") echo _("selected=\"selected\""); ?>  >Day</OPTION>
+		<OPTION VALUE="week" <?php if ($thisItem['billing_cycle']=="week") echo _("selected=\"selected\""); ?>  >Week</OPTION>
+		<OPTION VALUE="month" <?php if ($thisItem['billing_cycle']=="month") echo _("selected=\"selected\""); ?>  >Month</OPTION>
 		</SELECT></td>
     </tr>
 	<tr>
@@ -164,13 +164,13 @@ if ($online_updates && $foo = trunkbalance_vercheck()) {
 		
 		<td><SELECT id="billing_day" name="billing_day" tabindex="<?php echo ++$tabindex;?>">
 			<OPTION VALUE="-1">none selected</option>
-			<OPTION VALUE="sunday">Sunday</OPTION>
-			<OPTION VALUE="monday">Monday</OPTION>
-			<OPTION VALUE="tuesday">Tuesday</OPTION>
-			<OPTION VALUE="wednesday">Wednesday</OPTION>
-			<OPTION VALUE="thursday">Thursday</OPTION>
-			<OPTION VALUE="friday">Friday</OPTION>
-			<OPTION VALUE="saturday">Saturday</OPTION>
+			<OPTION VALUE="sunday" <?php if ($thisItem['billing_day']=="sunday") echo _("selected=\"selected\""); ?>  >Sunday</OPTION>
+			<OPTION VALUE="monday"  <?php if ($thisItem['billing_day']=="monday") echo _("selected=\"selected\""); ?> >Monday</OPTION>
+			<OPTION VALUE="tuesday" <?php if ($thisItem['billing_day']=="tuesday") echo _("selected=\"selected\""); ?>  >Tuesday</OPTION>
+			<OPTION VALUE="wednesday"  <?php if ($thisItem['billing_day']=="wednesday") echo _("selected=\"selected\""); ?> >Wednesday</OPTION>
+			<OPTION VALUE="thursday"  <?php if ($thisItem['billing_day']=="thursday") echo _("selected=\"selected\""); ?> >Thursday</OPTION>
+			<OPTION VALUE="friday" <?php if ($thisItem['billing_day']=="friday") echo _("selected=\"selected\""); ?>  >Friday</OPTION>
+			<OPTION VALUE="saturday"  <?php if ($thisItem['billing_day']=="saturday") echo _("selected=\"selected\""); ?> >Saturday</OPTION>
 		</SELECT></td>
 	</tr>
 	<tr>
@@ -188,7 +188,12 @@ if ($online_updates && $foo = trunkbalance_vercheck()) {
 	<tr><td colspan="2"><h5>Usage Limits Configuration<hr></h5></td></tr>
 	<tr>
 		<td><a href="#" class="info"><?php echo _("Include Inbound Calls:")?><span><?php echo _("Outbound calls are counted automatically, enable this setting to include inbound calls when determining usage limits.")?></span></a></td>
-		<td><input type="checkbox" name="count_inbound" value="<?php echo (isset($thisItem['count_inbound']) ? $thisItem['count_inbound'] : ''); ?>" tabindex="<?php echo ++$tabindex;?>"></td>
+		<td><input type="checkbox"
+			name="count_inbound"
+			value="<?php echo (isset($thisItem['count_inbound']) ? $thisItem['count_inbound'] : ''); ?>"
+			tabindex="<?php echo ++$tabindex;?>"
+			<?php echo (isset($thisItem['count_inbound']) ? "checked" : ''); ?> >
+			</td>
 	</tr>
 	<tr>
 		<td><a href="#" class="info"><?php echo _("Include Unanswered Calls:")?><span><?php echo _("Answered calls are counted automatically, enable this setting to include unanswered calls when determining usage limits.")?></span></a></td>
