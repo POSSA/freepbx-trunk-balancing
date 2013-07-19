@@ -1,7 +1,7 @@
 <module>
 	<rawname>trunkbalance</rawname>
 	<name>Trunk Balance</name>
-	<version>1.0.2</version>
+	<version>1.1.0</version>
 	<publisher>POSSA</publisher>
 	<candisable>yes</candisable>
 	<canuninstall>yes</canuninstall>
