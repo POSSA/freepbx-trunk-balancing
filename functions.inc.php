@@ -13,7 +13,8 @@ function trunkbalance_list() {
 
 function trunkbalance_listtrunk() {
 	$allowed = array(array('trunkid' => 0, 'name' => _("None"), 'tech' => _("None")));
-	$sqlr = "SELECT * FROM `trunks` WHERE (name NOT LIKE 'BAL_%') AND (tech!='enum' AND tech!='dundi') ORDER BY tech, name";
+//	$sqlr = "SELECT * FROM `trunks` WHERE (name NOT LIKE 'BAL_%') AND (tech!='enum' AND tech!='dundi') ORDER BY tech, name";
+	$sqlr = "SELECT * FROM `trunks` WHERE (name NOT LIKE 'BAL_%') AND (tech!='enum' AND tech!='dundi' AND tech != 'dahdi') or (tech = 'dahdi' AND channelid  REGEXP '^[0-9]*$' )  ORDER BY tech, name";
 	$results = sql($sqlr,"getAll",DB_FETCHMODE_ASSOC);
 	if(is_array($results)){
 		foreach($results as $result){
@@ -58,23 +59,61 @@ function trunkbalance_del($id){
 function trunkbalance_add($post){
 	global $db;
 
+	$desttrunk_id = $db->escapeSimple($post['desttrunk_id']);
 	$description = $db->escapeSimple($post['description']);
-       $desttrunk_id = $db->escapeSimple($post['desttrunk_id']);
-       $timegroup_id = $db->escapeSimple($post['timegroup_id']);
 	$dialpattern = $db->escapeSimple($post['dialpattern']);
 	$notdialpattern = $db->escapeSimple($post['notdialpattern']);
+	$billing_cycle = $db->escapeSimple($post['billing_cycle']);
+	$billingtime = $db->escapeSimple($post['billingtime']);
 	$billingday = $db->escapeSimple($post['billingday']);
+	$billingdate = $db->escapeSimple($post['billingdate']);
 	$billingperiod = $db->escapeSimple($post['billingperiod']);
 	$endingdate = $db->escapeSimple($post['endingdate']);
+	$count_inbound = $db->escapeSimple($post['count_inbound']);
+	$count_unanswered = $db->escapeSimple($post['count_unanswered']);
 	$loadratio = $db->escapeSimple($post['loadratio']);
 	$maxtime = $db->escapeSimple($post['maxtime']);
 	$maxnumber = $db->escapeSimple($post['maxnumber']);
 	$maxidentical = $db->escapeSimple($post['maxidentical']);
+	$timegroup_id = $db->escapeSimple($post['timegroup_id']);
+
 	$results = sql("
 		INSERT INTO trunkbalance
-			(description, desttrunk_id, timegroup_id, dialpattern, notdialpattern, billingday, billingperiod, endingdate, loadratio, maxtime, maxnumber, maxidentical)
+			(desttrunk_id, 
+			description,
+			dialpattern, 
+			notdialpattern, 
+			billing_cycle, 
+			billingtime, 
+			billing_day, 
+			billingdate, 
+			billingperiod, 
+			endingdate, 
+			count_inbound, 
+			count_unanswered, 
+			loadratio, 
+			maxtime, 
+			maxnumber, 
+			maxidentical, 
+			timegroup_id )
 		VALUES 
-			('$description', '$desttrunk_id', '$timegroup_id', '$dialpattern', '$notdialpattern', '$billingday','$billingperiod', '$endingdate', '$loadratio', '$maxtime', '$maxnumber', '$maxidentical')
+			('$desttrunk_id',
+			'$description',
+			'$dialpattern',
+			'$notdialpattern',
+			'$billing_cycle',
+			'$billingtime',
+			'$billing_day',
+			'$billingdate',
+			'$billingperiod',
+			'$endingdate',
+			'$count_inbound',
+			'$count_unanswered',
+			'$loadratio',
+			'$maxtime',
+			'$maxnumber',
+			'$maxidentical',
+			'$timegroup_id')
 		");
 	$result=core_trunks_add('custom','Balancedtrunk/'.$description,'','','','','notneeded','','','off','','off','BAL_'.$description,'');
 
@@ -83,38 +122,46 @@ function trunkbalance_add($post){
 function trunkbalance_edit($id,$post){
 	global $db;
 
-	$description = $db->escapeSimple($post['description']);
 	$desttrunk_id = $db->escapeSimple($post['desttrunk_id']);
-       $timegroup_id = $db->escapeSimple($post['timegroup_id']);
+	$description = $db->escapeSimple($post['description']);
 	$dialpattern = $db->escapeSimple($post['dialpattern']);
-	$notdialpattern = $db->escapeSimple($post['notdialpattern']);	
-	$billingday = $db->escapeSimple($post['billingday']);
+	$notdialpattern = $db->escapeSimple($post['notdialpattern']);
+	$billing_cycle = $db->escapeSimple($post['billing_cycle']);
+	$billingtime = $db->escapeSimple($post['billingtime']);
+	$billing_day = $db->escapeSimple($post['billing_day']);
+	$billingdate = $db->escapeSimple($post['billingdate']);
 	$billingperiod = $db->escapeSimple($post['billingperiod']);
 	$endingdate = $db->escapeSimple($post['endingdate']);
+	$count_inbound = $db->escapeSimple($post['count_inbound']);
+	$count_unanswered = $db->escapeSimple($post['count_unanswered']);
 	$loadratio = $db->escapeSimple($post['loadratio']);
 	$maxtime = $db->escapeSimple($post['maxtime']);
 	$maxnumber = $db->escapeSimple($post['maxnumber']);
 	$maxidentical = $db->escapeSimple($post['maxidentical']);
+	$timegroup_id = $db->escapeSimple($post['timegroup_id']);
 
-
-
-       $olddescription=sql("SELECT `description`FROM `trunkbalance` WHERE trunkbalance_id='$id'","getOne");
+	$olddescription=sql("SELECT `description`FROM `trunkbalance` WHERE trunkbalance_id='$id'","getOne");
 
 	$results = sql("
 		UPDATE trunkbalance 
 		SET 
-			description = '$description',
 			desttrunk_id = '$desttrunk_id',
-                     timegroup_id = '$timegroup_id',
+			description = '$description',
 			dialpattern = '$dialpattern',
 			notdialpattern = '$notdialpattern',
-			billingday = '$billingday',
+			billing_cycle = '$billing_cycle',
+			billingtime = '$billingtime',
+			billing_day = '$billing_day',
+			billingdate = '$billingdate',
 			billingperiod ='$billingperiod',
 			endingdate = '$endingdate',
+			count_inbound = '$count_inbound',
+			count_unanswered = '$count_unanswered',
 			loadratio = '$loadratio',
 			maxtime = '$maxtime',
 			maxnumber = '$maxnumber',
-			maxidentical ='$maxidentical'
+			maxidentical ='$maxidentical',
+			timegroup_id = '$timegroup_id'
 		WHERE trunkbalance_id = '$id'");
 
 	if ($olddescription !== $description) {//need to update the trunk too
