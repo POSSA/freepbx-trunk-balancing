@@ -1,13 +1,17 @@
 <module>
 	<rawname>trunkbalance</rawname>
 	<name>Trunk Balance</name>
-	<version>1.0.2</version>
+	<version>1.1.0</version>
 	<publisher>POSSA</publisher>
 	<candisable>yes</candisable>
 	<canuninstall>yes</canuninstall>
 	<type>setup</type>
 	<category>Other</category>
+	<attention>
+		**** After installation check your balanced trunk definitions, particularly the Floating time. The time definition was changed from days to hours in version 1.1.0. ****
+	</attention>
 	<changelog>
+		*1.1.0* Additional flexibility for billing periods
 		*1.0.2* pass dialed number directly to dialout macro
 		*1.0.1* fixed max unique call logic
 		*1.0.0* revised to work with FreePBX 2.10
