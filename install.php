@@ -11,9 +11,14 @@ $cols['desttrunk_id'] = "INTEGER default '0'";
 $cols['description'] = "varchar(50) default NULL";
 $cols['dialpattern'] = "varchar(255) default NULL";
 $cols['notdialpattern'] = "varchar(255) default NULL";
-$cols['billingday'] = "SMALLINT default '0'";
-$cols['billingperiod'] = "SMALLINT default '0'";
+$cols['billing_cycle'] = "varchar(50) default NULL";
+$cols['billingtime'] = "time default NULL";
+$cols['billing_day'] = "varchar(50) default NULL";
+$cols['billingdate'] = "SMALLINT default '0'";
+$cols['billingperiod'] = "INT default '0'";
 $cols['endingdate'] = "datetime default NULL";
+$cols['count_inbound'] = "varchar(50) default NULL";
+$cols['count_unanswered'] = "varchar(50) default NULL";
 $cols['loadratio'] = "INTEGER default '1'";
 $cols['maxtime'] = "INTEGER default '-1'";
 $cols['maxnumber'] = "INTEGER default '-1'";
@@ -22,22 +27,10 @@ $cols['timegroup_id'] = "INTEGER default '-1'";
 
 
 
+
 // create the tables
 $sql = "CREATE TABLE IF NOT EXISTS `trunkbalance` (
-	trunkbalance_id INTEGER NOT NULL PRIMARY KEY $autoincrement,
-	desttrunk_id INTEGER default '0',
-	description varchar(50) default NULL,
-	dialpattern varchar(255) default NULL,
-	notdialpattern varchar(255) default NULL,
-	billingday SMALLINT default '0',
-	billingperiod SMALLINT default '0',
-	endingdate datetime default NULL,
-	loadratio INTEGER default '1',
-	maxtime INTEGER default '-1',
-	maxnumber INTEGER default '-1',
-	maxidentical INTEGER default '-1',
-       timegroup_id INTEGER default '-1'
-);";
+	trunkbalance_id INTEGER NOT NULL PRIMARY KEY $autoincrement);";
 $check = $db->query($sql);
 if (DB::IsError($check)) {
         die_freepbx( "Can not create `trunkbalance` table: " . $check->getMessage() .  "\n");
