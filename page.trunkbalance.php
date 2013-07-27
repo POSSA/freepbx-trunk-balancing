@@ -164,13 +164,13 @@ if ($online_updates && $foo = trunkbalance_vercheck()) {
 		
 		<td><SELECT id="billing_day" name="billing_day" tabindex="<?php echo ++$tabindex;?>">
 			<OPTION VALUE="-1">none selected</option>
-			<OPTION VALUE="1"  <?php if ($thisItem['billing_day']=="1") echo _("selected=\"selected\""); ?> >Monday</OPTION>
-			<OPTION VALUE="2" <?php if ($thisItem['billing_day']=="2") echo _("selected=\"selected\""); ?>  >Tuesday</OPTION>
-			<OPTION VALUE="3"  <?php if ($thisItem['billing_day']=="3") echo _("selected=\"selected\""); ?> >Wednesday</OPTION>
-			<OPTION VALUE="4"  <?php if ($thisItem['billing_day']=="4") echo _("selected=\"selected\""); ?> >Thursday</OPTION>
-			<OPTION VALUE="5" <?php if ($thisItem['billing_day']=="5") echo _("selected=\"selected\""); ?>  >Friday</OPTION>
-			<OPTION VALUE="6"  <?php if ($thisItem['billing_day']=="6") echo _("selected=\"selected\""); ?> >Saturday</OPTION>
-			<OPTION VALUE="7" <?php if ($thisItem['billing_day']=="7") echo _("selected=\"selected\""); ?>  >Sunday</OPTION>
+			<OPTION VALUE="Monday"  <?php if ($thisItem['billing_day']=="Monday") echo _("selected=\"selected\""); ?> >Monday</OPTION>
+			<OPTION VALUE="Tuesday" <?php if ($thisItem['billing_day']=="Tuesday") echo _("selected=\"selected\""); ?>  >Tuesday</OPTION>
+			<OPTION VALUE="Wednesday"  <?php if ($thisItem['billing_day']=="Wednesday") echo _("selected=\"selected\""); ?> >Wednesday</OPTION>
+			<OPTION VALUE="Thursday"  <?php if ($thisItem['billing_day']=="Thursday") echo _("selected=\"selected\""); ?> >Thursday</OPTION>
+			<OPTION VALUE="Friday" <?php if ($thisItem['billing_day']=="Friday") echo _("selected=\"selected\""); ?>  >Friday</OPTION>
+			<OPTION VALUE="Saturday"  <?php if ($thisItem['billing_day']=="Saturday") echo _("selected=\"selected\""); ?> >Saturday</OPTION>
+			<OPTION VALUE="Sunday" <?php if ($thisItem['billing_day']=="Sunday") echo _("selected=\"selected\""); ?>  >Sunday</OPTION>
 		</SELECT></td>
 	</tr>
 	<tr>
