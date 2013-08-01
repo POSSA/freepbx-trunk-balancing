@@ -9,7 +9,9 @@ This project is freely released under GNU GPL3 license
 
 Installation:
 Manually download the latest version of the module tarball from here:
+
 http://pbxossa.org/files/trunkbalance/
+
 Don't decompress the archive. In FreePBX, Module Admin, upload modules, browse to the tarball and upload
 it to the PBX. The module will now be available to install/disable/uninstall in module admin like any other module.
 
