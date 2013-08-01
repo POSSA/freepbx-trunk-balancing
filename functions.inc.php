@@ -74,7 +74,9 @@ function trunkbalance_add($post){
 	$desttrunk_id = $db->escapeSimple($post['desttrunk_id']);
 	$description = $db->escapeSimple($post['description']);
 	$dialpattern = $db->escapeSimple($post['dialpattern']);
+	$dp_andor = $db->escapeSimple($post['dp_andor']);
 	$notdialpattern = $db->escapeSimple($post['notdialpattern']);
+	$notdp_andor = $db->escapeSimple($post['notdp_andor']);
 	$billing_cycle = $db->escapeSimple($post['billing_cycle']);
 	$billingtime = $db->escapeSimple($post['billingtime']);
 	$billingday = $db->escapeSimple($post['billingday']);
@@ -91,28 +93,32 @@ function trunkbalance_add($post){
 
 	$results = sql("
 		INSERT INTO trunkbalance
-			(desttrunk_id, 
+			(desttrunk_id,
 			description,
-			dialpattern, 
-			notdialpattern, 
-			billing_cycle, 
-			billingtime, 
-			billing_day, 
-			billingdate, 
-			billingperiod, 
-			endingdate, 
-			count_inbound, 
-			count_unanswered, 
-			loadratio, 
-			maxtime, 
-			maxnumber, 
-			maxidentical, 
-			timegroup_id )
+			dialpattern,
+			dp_andor,
+			notdialpattern,
+			notdp_andor,
+			billing_cycle,
+			billingtime,
+			billing_day,
+			billingdate,
+			billingperiod,
+			endingdate,
+			count_inbound,
+			count_unanswered,
+			loadratio,
+			maxtime,
+			maxnumber,
+			maxidentical,
+			timegroup_id)
 		VALUES 
 			('$desttrunk_id',
 			'$description',
 			'$dialpattern',
+			'$dp_andor',
 			'$notdialpattern',
+			'$notdp_andor',
 			'$billing_cycle',
 			'$billingtime',
 			'$billing_day',
@@ -137,7 +143,9 @@ function trunkbalance_edit($id,$post){
 	$desttrunk_id = $db->escapeSimple($post['desttrunk_id']);
 	$description = $db->escapeSimple($post['description']);
 	$dialpattern = $db->escapeSimple($post['dialpattern']);
+	$dp_andor = $db->escapeSimple($post['dp_andor']);
 	$notdialpattern = $db->escapeSimple($post['notdialpattern']);
+	$notdp_andor = $db->escapeSimple($post['notdp_andor']);	
 	$billing_cycle = $db->escapeSimple($post['billing_cycle']);
 	$billingtime = $db->escapeSimple($post['billingtime']);
 	$billing_day = $db->escapeSimple($post['billing_day']);
@@ -160,7 +168,9 @@ function trunkbalance_edit($id,$post){
 			desttrunk_id = '$desttrunk_id',
 			description = '$description',
 			dialpattern = '$dialpattern',
+			dp_andor = '$dp_andor',
 			notdialpattern = '$notdialpattern',
+			notdp_andor = '$notdp_andor',
 			billing_cycle = '$billing_cycle',
 			billingtime = '$billingtime',
 			billing_day = '$billing_day',

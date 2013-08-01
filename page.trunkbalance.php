@@ -138,14 +138,21 @@ if ($online_updates && $foo = trunkbalance_vercheck()) {
 		</SELECT></td>
 	</tr>
 	<tr>
-		<td><a href="#" class="info"><?php echo _("Matching Rule:")?><span><?php echo _("Enter the SQL matching pattern that will be applied to the CDR to calculate your rules on this trunk. It will be inserted as WHERE dst LIKE 'your pattern'. For instance if you want to match all numbers starting by 0033 you will enter 0033%. At this time only one pattern will work. ")?></span></a></td>
+		<td><a href="#" class="info"><?php echo _("Matching Rule:")?><span><?php echo _("Enter the SQL matching pattern that will be applied to the CDR to calculate your rules on this trunk, separate multiple rules by commas. It will be inserted as WHERE dst LIKE 'your pattern'. For instance if you want to match all numbers starting by 0033 or 0044 you will enter 0033%, 0044%.")?></span></a></td>
 		<td><input type="textarea" rows="5" cols="25" name="dialpattern" value="<?php echo (isset($thisItem['dialpattern']) ? $thisItem['dialpattern'] : ''); ?>" tabindex="<?php echo ++$tabindex;?>"></td>
 	</tr>
 	<tr>
-		<td><a href="#" class="info"><?php echo _("Not Matching Rule:")?><span><?php echo _("Enter the matching pattern that will be excluded from the CDR matching to calculate your rules on this trunk.It will be inserted as WHERE dst NOT LIKE 'your pattern'. ")?></span></a></td>
+		<td><a href="#" class="info"><?php echo _("Apply all matching rules:")?><span><?php echo _("By default, this module will apply ANY of the multiple matching rules. Select this option if you want to apply ALL rules. This setting has no affect unless multiple rules are specified")?></span></a></td>
+		<td><input type="checkbox"  name="dp_andor" <?php echo (($thisItem['dp_andor'] == "on") ? "checked" : "") ; ?> tabindex="<?php echo ++$tabindex;?>"></td>
+	</tr>	
+	<tr>
+		<td><a href="#" class="info"><?php echo _("Not Matching Rule:")?><span><?php echo _("Enter the matching pattern that will be excluded from the CDR matching to calculate your rules on this trunk, separate multiple rules by commas. It will be inserted as WHERE dst NOT LIKE 'your pattern'. For instance if you want to exclude all numbers starting by 0033 or 0044 you will enter 0033%, 0044%.")?></span></a></td>
 		<td><input type="textarea" rows="5" cols="25" name="notdialpattern" value="<?php echo (isset($thisItem['notdialpattern']) ? $thisItem['notdialpattern'] : ''); ?>" tabindex="<?php echo ++$tabindex;?>"></td>
 	</tr>
-
+	<tr>
+		<td><a href="#" class="info"><?php echo _("Apply all non-matching rules:")?><span><?php echo _("By default, this module will apply ANY of the multiple matching rules. Select this option if you want to apply ALL rules. This setting has no affect unless multiple rules are specified")?></span></a></td>
+		<td><input type="checkbox"  name="notdp_andor" <?php echo (($thisItem['notdp_andor'] == "on") ? "checked" : "") ; ?> tabindex="<?php echo ++$tabindex;?>"></td>
+	</tr>
 	<tr><td colspan="2"><h5>Billing Cycle Configuration<hr></h5></td></tr>
 		<td><a href="#" class="info"><?php echo _("Choose billing cycle:")?><span><?php echo _("Choose the time period that the billing cycle will resest to")?></span></a></td>
 		<td><SELECT id="billing_cycle" name="billing_cycle" tabindex="<?php echo ++$tabindex;?>"><OPTION VALUE="-1">none selected</option>

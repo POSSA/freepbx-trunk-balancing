@@ -10,7 +10,9 @@ $autoincrement = (($amp_conf["AMPDBENGINE"] == "sqlite") || ($amp_conf["AMPDBENG
 $cols['desttrunk_id'] = "INTEGER default '0'";
 $cols['description'] = "varchar(50) default NULL";
 $cols['dialpattern'] = "varchar(255) default NULL";
+$cols['dp_andor'] = "varchar(50) default NULL";
 $cols['notdialpattern'] = "varchar(255) default NULL";
+$cols['notdp_andor'] = "varchar(50) default NULL";
 $cols['billing_cycle'] = "varchar(50) default NULL";
 $cols['billingtime'] = "time default NULL";
 $cols['billing_day'] = "varchar(50) default NULL";

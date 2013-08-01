@@ -3,7 +3,7 @@
 
 /**********************************
 Trunk Balancing Module - agi file
-Last edited by lgaetz July 26, 2013
+Last edited by lgaetz August 1, 2013
 **********************************/
 
 set_time_limit(5);
@@ -64,7 +64,9 @@ if (substr($name,0,4)=='BAL_') //balanced trunk
 	$desttrunk=$baltrunk[0]['desttrunk_id'];
 //	description not needed in this file
 	$dialpattern=$baltrunk[0]['dialpattern'];
+	$dp_andor=$baltrunk[0]['dp_andor'];
 	$notdialpattern=$baltrunk[0]['notdialpattern'];
+	$notdp_andor=$baltrunk[0]['notdp_andor'];
 	$billing_cycle=$baltrunk[0]['billing_cycle'];
 	$billingtime=$baltrunk[0]['billingtime'];
 	$billing_day=$baltrunk[0]['billing_day'];
@@ -286,16 +288,51 @@ if (substr($name,0,4)=='BAL_') //balanced trunk
 				
 		}
 
-		// apply user supplied patterns to query
+		// break up user supplied match patterns into query
 		$sqlpattern='';
-		if ($dialpattern!=='')
-		{
-			$sqlpattern=' AND dst LIKE \''.$dialpattern.'\'';
+		if ($dialpattern!=='') {
+			if ($dp_andor == 'on') {
+				$combiner = " AND ";
+			} else {
+				$combiner = " OR ";
+			}
+			$sqlpattern=' AND (';
+			$dps = explode(',',$dialpattern);
+			$count = 1;
+			foreach ($dps as $dp)  {
+				$dp=trim($dp);
+				if ($count == 1) {
+					$sqlpattern = $sqlpattern." dst LIKE '$dp'";
+				} else {
+					$sqlpattern = $sqlpattern." $combiner dst LIKE '$dp'";
+				}
+				$count = $count + 1;
+			}
+			$sqlpattern = $sqlpattern." ) ";
 		}
-		if ($notdialpattern!=='')
-		{
-			$sqlpattern=$sqlpattern.' AND dst NOT LIKE \''.$notdialpattern.'\'';
+		
+		// break up user supplied non-match patterns into query
+		if ($notdialpattern!=='')  {
+			if ($notdp_andor== 'on') {
+				$combiner = " AND ";
+			} else {
+				$combiner = " OR ";
+			}
+			$sqlpattern=$sqlpattern.' AND (';
+			$dps = explode(',',$notdialpattern);
+			$count = 1;
+			foreach ($dps as $dp)  {
+				$dp=trim($dp);
+				if ($count == 1) {
+					$sqlpattern = $sqlpattern." dst NOT LIKE '$dp'";
+				} else {
+					$sqlpattern = $sqlpattern." $combiner dst NOT LIKE '$dp'";
+				}
+				$count = $count + 1;
+			}
+			$sqlpattern = $sqlpattern." ) ";
 		}
+
 
 		// load info from the destination trunk
 		$sql='SELECT * FROM `trunks` WHERE trunkid=\''.$desttrunk.'\'';
@@ -331,22 +368,21 @@ if (substr($name,0,4)=='BAL_') //balanced trunk
 		$db2->dbname='asteriskcdrdb';
 
 		//test number of calls
-		if ($maxnumber>0)
-			{
+		if ($maxnumber>0)  {
 			$sql='SELECT COUNT(*) FROM `cdr` WHERE '.$disposition.' AND '.$channel_filter.' '.$sqldate.$sqlpattern;
 			$query= $db2->sql($sql,'NUM');
 			$numberofcall=$query[0][0];
 			if ($maxnumber>$numberofcall)
-				{ 
+			{ 
 				$AGI->verbose("$maxnumber max calls. This trunk has now only $numberofcall calls - Rule passed", 3);
 				$AGI->verbose($sql, 3);
-				} else
-				{
+			} else {
 				$AGI->verbose("$maxnumber max calls. This trunk has now $numberofcall calls - Rule failed", 3);
 				$trunkallowed=false;
-				}
-		
+				$AGI->verbose($sql, 3);
 			}
+		
+		}
 
 		//test number of different calls
 		if (($maxidentical>0) and ($trunkallowed))
