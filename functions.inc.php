@@ -72,6 +72,7 @@ function trunkbalance_add($post){
 	global $db;
 
 	$desttrunk_id = $db->escapeSimple($post['desttrunk_id']);
+	$disabled = $db->escapeSimple($post['disabled']);
 	$description = $db->escapeSimple($post['description']);
 	$dialpattern = $db->escapeSimple($post['dialpattern']);
 	$dp_andor = $db->escapeSimple($post['dp_andor']);
@@ -94,6 +95,7 @@ function trunkbalance_add($post){
 	$results = sql("
 		INSERT INTO trunkbalance
 			(desttrunk_id,
+			disabled,
 			description,
 			dialpattern,
 			dp_andor,
@@ -114,6 +116,7 @@ function trunkbalance_add($post){
 			timegroup_id)
 		VALUES 
 			('$desttrunk_id',
+			'$disabled',
 			'$description',
 			'$dialpattern',
 			'$dp_andor',
@@ -141,6 +144,7 @@ function trunkbalance_edit($id,$post){
 	global $db;
 
 	$desttrunk_id = $db->escapeSimple($post['desttrunk_id']);
+	$disabled = $db->escapeSimple($post['disabled']);
 	$description = $db->escapeSimple($post['description']);
 	$dialpattern = $db->escapeSimple($post['dialpattern']);
 	$dp_andor = $db->escapeSimple($post['dp_andor']);
@@ -166,6 +170,7 @@ function trunkbalance_edit($id,$post){
 		UPDATE trunkbalance 
 		SET 
 			desttrunk_id = '$desttrunk_id',
+			disabled = '$disabled',
 			description = '$description',
 			dialpattern = '$dialpattern',
 			dp_andor = '$dp_andor',

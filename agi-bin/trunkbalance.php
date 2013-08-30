@@ -62,6 +62,7 @@ if (substr($name,0,4)=='BAL_') //balanced trunk
 	$sql='SELECT * FROM `trunkbalance` WHERE description=\''.$name.'\'';
 	$baltrunk = $db->sql($sql,'ASSOC');
 	$desttrunk=$baltrunk[0]['desttrunk_id'];
+	$disabled =$baltrunk[0]['disabled'];
 //	description not needed in this file
 	$dialpattern=$baltrunk[0]['dialpattern'];
 	$dp_andor=$baltrunk[0]['dp_andor'];
@@ -83,13 +84,18 @@ if (substr($name,0,4)=='BAL_') //balanced trunk
 	$todaydate=gettimeofday(true);
 	$today=getdate();
 
+	if ($disabled == "on") {
+		$AGI->verbose('Trunk is disabled, no calls permitted',3);
+		$trunkallowed = false;
+	}
+	
 	if ($count_unanswered)  {
 		$disposition = "(disposition='ANSWERED' OR disposition='NO ANSWER')";
 	} else {
 		$disposition = "disposition='ANSWERED'";
 	}
 
-	if ($timegroup>0) // check the time group condition
+	if ($timegroup>0 & $trunkallowed) // check the time group condition
     { 
 		$daynames = array("sun"=>0, "mon"=>1, "tue"=>2, "wed"=>3, "thu"=>4, "fri"=>5, "sat"=>6); 
 		$monthnames= array ("jan"=>1, "feb"=>2, "mar"=>3, "apr"=>4, "may"=>5, "jun"=>6, "jul"=>7, "aug"=>8, "sep"=>9, "oct"=>10, "nov"=>11, "dec"=>12);

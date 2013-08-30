@@ -99,6 +99,10 @@ if ($online_updates && $foo = trunkbalance_vercheck()) {
 <?php		}?>
 
 	<tr>
+		<td><a href="#" class="info"><?php echo _("<b>Disable</b> Balanced Trunk $itemid:")?><span><?php echo _("If selected, this trunk is disabled and will not allow calls regardless of rules that follow")?></span></a></td>
+		<td><input type="checkbox"  name="disabled" <?php echo (($thisItem['disabled'] == "on") ? "checked" : "") ; ?> tabindex="<?php echo ++$tabindex;?>"></td>
+	</tr>
+	<tr>
 		<td><a href="#" class="info"><?php echo _("Trunk Description:")?><span><?php echo _("Enter a description for this balanced trunk.")?></span></a></td>
 		<td><input type="text" name="description" value="<?php echo (isset($thisItem['description']) ? $thisItem['description'] : ''); ?>" tabindex="<?php echo ++$tabindex;?>"></td>
 	</tr>
