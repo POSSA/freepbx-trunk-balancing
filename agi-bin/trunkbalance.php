@@ -3,9 +3,20 @@
 
 /**********************************
 Trunk Balancing Module - agi file
-Last edited by lgaetz August 1, 2013
+Last edited by lgaetz 2014-11-16
 **********************************/
 
+
+// Using FreePBX bootstrap for some later features, requires FreePBX 2.9 or higher
+if (!@include_once(getenv('FREEPBX_CONF') ? getenv('FREEPBX_CONF') : '/etc/freepbx.conf')) {
+include_once('/etc/asterisk/freepbx.conf');
+}
+// set FreePBX globals
+global $db;  // FreePBX asterisk database connector
+global $amp_conf;  // array with Asterisk configuration
+global $astman;  // AMI
+
+// origninal features are not using FreePBX Bootstrap to collect user params
 set_time_limit(5);
 require('phpagi.php');
 require('sqltrunkbal.php');
@@ -14,8 +25,7 @@ error_reporting(0);
 
 
 $AGI = new AGI();
-$db = new AGIDB($AGI);
-  
+$db1 = new AGIDB($AGI);
 
 if (!isset($argv[1])) {
         $AGI->verbose('Missing trunk info',3);
@@ -46,21 +56,23 @@ if (isset($argv[2]))
 			$exten = NULL;		//agi request may not return a useful result so clear variable if not numeric
 		}
 	}
-
+$AGI->verbose('Dialed digits: '.$exten, 3);
 
 
 $sql='SELECT * FROM `trunks` WHERE trunkid=\''.$trunk.'\'';
-$res = $db->sql($sql,'ASSOC');
+$res = $db1->sql($sql,'ASSOC');
 $name=$res[0]['name'];
 
 
 if (substr($name,0,4)=='BAL_') //balanced trunk
 	{
-	$name=substr($name,4);
+	// default condition is that the trunk is allowed, failure of any rule means trunk gets denied
 	$trunkallowed=true;
+
+	$name=substr($name,4);
 	$AGI->verbose("This trunk $name is balanced. Evaluating rules", 3);
 	$sql='SELECT * FROM `trunkbalance` WHERE description=\''.$name.'\'';
-	$baltrunk = $db->sql($sql,'ASSOC');
+	$baltrunk = $db1->sql($sql,'ASSOC');
 	$desttrunk=$baltrunk[0]['desttrunk_id'];
 	$disabled =$baltrunk[0]['disabled'];
 //	description not needed in this file
@@ -81,6 +93,9 @@ if (substr($name,0,4)=='BAL_') //balanced trunk
 	$maxnumber=$baltrunk[0]['maxnumber'];
 	$maxidentical=$baltrunk[0]['maxidentical'];
 	$timegroup=$baltrunk[0]['timegroup_id'];
+	$url=$baltrunk[0]['url'];
+	$url_timeout=$baltrunk[0]['url_timeout'];
+	$regex=trim($baltrunk[0]['regex']);
 	$todaydate=gettimeofday(true);
 	$today=getdate();
 
@@ -101,7 +116,7 @@ if (substr($name,0,4)=='BAL_') //balanced trunk
 		$monthnames= array ("jan"=>1, "feb"=>2, "mar"=>3, "apr"=>4, "may"=>5, "jun"=>6, "jul"=>7, "aug"=>8, "sep"=>9, "oct"=>10, "nov"=>11, "dec"=>12);
 		$timegroupcondition=false;
 		$sql='SELECT * FROM `timegroups_details` WHERE timegroupid=\''.$timegroup.'\'';
-		$res = $db->sql($sql,'ASSOC');
+		$res = $db1->sql($sql,'ASSOC');
 		if(is_array($res))
 		{
 			foreach($res as $timegroupdetail)
@@ -342,7 +357,7 @@ if (substr($name,0,4)=='BAL_') //balanced trunk
 
 		// load info from the destination trunk
 		$sql='SELECT * FROM `trunks` WHERE trunkid=\''.$desttrunk.'\'';
-		$res = $db->sql($sql,'ASSOC');
+		$res = $db1->sql($sql,'ASSOC');
 		$destrunk_tech=$res[0]['tech'];
 		$destrunk_channelid=$res[0]['channelid'];
 		switch ($destrunk_tech)
@@ -472,9 +487,39 @@ if (substr($name,0,4)=='BAL_') //balanced trunk
 				$trunkallowed=false;
 				}
 			}
-	
 		}
-	
+	// URL section, load user provided URL and check regex against it
+	if ($url && $regex) {
+		$AGI->verbose("Checking URL and regex", 3);
+
+		//break up regex lines into array
+		$reg_array = explode("\n",$regex);
+
+		// check URL and regex for string $OUTNUM$ and substitute the dialled digits
+		$url = str_replace("\$OUTNUM$", trim($exten), $url);
+		$AGI->verbose("URL :".$url, 3);
+		$foo = tb_get_url_contents($url);
+
+		$regex_match = false;
+		$regex_count = 0;
+		foreach ($reg_array as $reg) {
+			$reg = str_replace("\$OUTNUM$", trim($exten), $reg);
+			$AGI->verbose("regex".++$regex_count.": ".$reg, 3);
+			preg_match($reg, $foo, $matches);
+			if (count($matches)) {
+				$regex_match = true;
+				break;
+			}
+		}
+
+		if ($regex_match) {
+			$AGI->verbose("regex match", 3);
+		}
+		else {
+			$AGI->verbose("no regex match", 3);
+			$trunkallowed = false;
+		}
+	}
 	if ($trunkallowed)
 		{
 		$AGI->verbose("Call authorized. The new trunk number is $desttrunk", 3);

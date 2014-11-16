@@ -46,6 +46,9 @@ $cols['maxtime'] = "INTEGER default '-1'";
 $cols['maxnumber'] = "INTEGER default '-1'";
 $cols['maxidentical'] = "INTEGER default '-1'";
 $cols['timegroup_id'] = "INTEGER default '-1'";
+$cols['url'] = "varchar(250) default NULL";
+$cols['url_timeout'] = "INTEGER default '10'";
+$cols['regex'] = "varchar(250) default NULL";
 
 // create the table and populate with the key auto increment column
 $sql = "CREATE TABLE IF NOT EXISTS `$tablename` (
@@ -92,7 +95,7 @@ foreach($cols as $key=>$val) {
 			die_freepbx( "Can not add column ".$key.": " . $check->getMessage() .  "<br>");
 		}
 		else {
-			print 'Added column '.$key.' to $tablename table.<br>';
+			print 'Added column '.$key.' to '.$tablename.' table.<br>';
 		}
 	}
 }
