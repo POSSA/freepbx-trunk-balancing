@@ -238,7 +238,7 @@ $module_local = trunkbalance_xml2array("modules/trunkbalance/module.xml");
 		<td><input type="number" name="url_timeout" value="<?php echo (isset($thisItem['url_timeout']) ? $thisItem['url_timeout'] : ''); ?>" tabindex="<?php echo ++$tabindex;?>"></td>
 	</tr>
 	<tr>
-		<td><a href="#" class="info"><?php echo _("regex:")?><span><?php echo _("Enter PCRE regex with delimiters to search the URL contents, substitute the string $OUTNUM$ in place of the outbound dialled digits. Separate multiple regexs on each line")?></span></a></td>
+		<td><a href="#" class="info"><?php echo _("regex:")?><span><?php echo _("Enter PCRE regex with delimiters to search the URL contents, substitute the string \$OUTNUM\$ in place of the outbound dialled digits. Separate multiple regexs on each line")?></span></a></td>
 		<td><textarea name="regex" tabindex="<?php echo ++$tabindex;?>" style="width:250px;height:150px;"><?php echo (isset($thisItem['regex']) ? $thisItem['regex'] : ''); ?></textarea></td>
 		</tr>
 	<tr>
