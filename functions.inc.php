@@ -72,6 +72,7 @@ function trunkbalance_add($post){
 	global $db;
 
 	$desttrunk_id = $db->escapeSimple($post['desttrunk_id']);
+	$disabled = $db->escapeSimple($post['disabled']);
 	$description = $db->escapeSimple($post['description']);
 	$dialpattern = $db->escapeSimple($post['dialpattern']);
 	$dp_andor = $db->escapeSimple($post['dp_andor']);
@@ -90,10 +91,14 @@ function trunkbalance_add($post){
 	$maxnumber = $db->escapeSimple($post['maxnumber']);
 	$maxidentical = $db->escapeSimple($post['maxidentical']);
 	$timegroup_id = $db->escapeSimple($post['timegroup_id']);
+	$url = $db->escapeSimple($post['url']);
+	$url_timeout = $db->escapeSimple($post['url_timeout']);
+	$regex = $db->escapeSimple($post['regex']);
 
 	$results = sql("
 		INSERT INTO trunkbalance
 			(desttrunk_id,
+			disabled,
 			description,
 			dialpattern,
 			dp_andor,
@@ -111,9 +116,13 @@ function trunkbalance_add($post){
 			maxtime,
 			maxnumber,
 			maxidentical,
-			timegroup_id)
+			timegroup_id,
+			url,
+			url_timeout,
+			regex)
 		VALUES 
 			('$desttrunk_id',
+			'$disabled',
 			'$description',
 			'$dialpattern',
 			'$dp_andor',
@@ -131,7 +140,10 @@ function trunkbalance_add($post){
 			'$maxtime',
 			'$maxnumber',
 			'$maxidentical',
-			'$timegroup_id')
+			'$timegroup_id',
+			'$url',
+			'$url_timeout',
+			'$regex')
 		");
 	$result=core_trunks_add('custom','Balancedtrunk/'.$description,'','','','','notneeded','','','off','','off','BAL_'.$description,'');
 
@@ -141,6 +153,7 @@ function trunkbalance_edit($id,$post){
 	global $db;
 
 	$desttrunk_id = $db->escapeSimple($post['desttrunk_id']);
+	$disabled = $db->escapeSimple($post['disabled']);
 	$description = $db->escapeSimple($post['description']);
 	$dialpattern = $db->escapeSimple($post['dialpattern']);
 	$dp_andor = $db->escapeSimple($post['dp_andor']);
@@ -159,6 +172,9 @@ function trunkbalance_edit($id,$post){
 	$maxnumber = $db->escapeSimple($post['maxnumber']);
 	$maxidentical = $db->escapeSimple($post['maxidentical']);
 	$timegroup_id = $db->escapeSimple($post['timegroup_id']);
+	$url = $db->escapeSimple($post['url']);
+	$url_timeout = $db->escapeSimple($post['url_timeout']);
+	$regex = $db->escapeSimple($post['regex']);
 
 	$olddescription=sql("SELECT `description`FROM `trunkbalance` WHERE trunkbalance_id='$id'","getOne");
 
@@ -166,6 +182,7 @@ function trunkbalance_edit($id,$post){
 		UPDATE trunkbalance 
 		SET 
 			desttrunk_id = '$desttrunk_id',
+			disabled = '$disabled',
 			description = '$description',
 			dialpattern = '$dialpattern',
 			dp_andor = '$dp_andor',
@@ -183,7 +200,10 @@ function trunkbalance_edit($id,$post){
 			maxtime = '$maxtime',
 			maxnumber = '$maxnumber',
 			maxidentical ='$maxidentical',
-			timegroup_id = '$timegroup_id'
+			timegroup_id = '$timegroup_id',
+			url = '$url',
+			url_timeout = '$url_timeout',
+			regex = '$regex'
 		WHERE trunkbalance_id = '$id'");
 
 	if ($olddescription !== $description) {//need to update the trunk too
@@ -205,7 +225,7 @@ function trunkbalance_hookGet_config($engine) {
 }
 
 	
-function trunkbalance_vercheck() {	
+function trunkbalance_vercheck() {
 	// compare version numbers of local module.xml and remote module.xml 
 	// returns true if a new version is available
 	$newver = false;
@@ -368,3 +388,49 @@ function trunkbalance_xml2array($url, $get_attributes = 1, $priority = 'tag')  {
 	}
 	return ($xml_array);
 }
+
+/**
+  Returns the content of a URL.
+ */
+function tb_get_url_contents($url, $post_data=false, $referrer=false, $cookie_file=false, $useragent=false, $curl_timeout=10) {
+	$crl = curl_init();
+	if (!$useragent) {
+		// Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.2.6) Gecko/20100625 Firefox/3.6.6 ( .NET CLR 3.5.30729)
+		$useragent = "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.1) Gecko/20061204 Firefox/2.0.0.1";
+	}
+	if ($referrer) {
+		curl_setopt($crl, CURLOPT_REFERER, $referrer);
+	}
+	curl_setopt($crl, CURLOPT_USERAGENT, $useragent);
+	curl_setopt($crl, CURLOPT_URL, $url);
+	curl_setopt($crl, CURLOPT_RETURNTRANSFER, true);
+	curl_setopt($crl, CURLOPT_CONNECTTIMEOUT, $curl_timeout);
+	curl_setopt($crl, CURLOPT_FAILONERROR, true);
+	curl_setopt($crl, CURLOPT_TIMEOUT, $curl_timeout);
+	if ($cookie_file) {
+		curl_setopt($crl, CURLOPT_COOKIEJAR, $cookie_file);
+		curl_setopt($crl, CURLOPT_COOKIEFILE, $cookie_file);
+	}
+	if ($post_data) {
+		curl_setopt($crl, CURLOPT_POST, 1); // set POST method
+		curl_setopt($crl, CURLOPT_POSTFIELDS, $this->cisf_url_encode_array($post_data)); // add POST fields
+	}
+	$ret = trim(curl_exec($crl));
+	if (curl_error($crl)) {
+	 //   $this->DebugPrint(" " . curl_error($crl) . " ");
+	}
+	//if debug is turned on, return the error number if the page fails.
+	if ($ret === false) {
+		$ret = '';
+	}
+	//something in curl is causing a return of "1" if the page being called is valid, but completely empty.
+	//to get rid of this, I'm doing a nasty hack of just killing results of "1".
+	if ($ret == '1') {
+		$ret = '';
+	}
+	curl_close($crl);
+	// $this->DebugPrint("Orignal Raw Returned Data: </br><textarea>".$ret."</textarea></br>",DEBUG_ALL);
+	return $ret;
+}
+
+

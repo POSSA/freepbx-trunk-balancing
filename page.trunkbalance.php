@@ -10,6 +10,8 @@ $dispnum = "trunkbalance"; //used for switch on config.php
 
 $tabindex = 0;
 
+
+
 //if submitting form, update database
 if(isset($_POST['action'])) {
 	switch ($action) {
@@ -81,6 +83,9 @@ if ($online_updates && $foo = trunkbalance_vercheck()) {
 	print "<br>A <b>new version</b> of this module is available from the <a target='_blank' href='http://pbxossa.org'>PBX Open Source Software Alliance</a><br>";
 	}
 
+// get current verson of module
+$module_local = trunkbalance_xml2array("modules/trunkbalance/module.xml");
+	
 ?>
 	<h2><?php echo ($itemid ? _("Balanced Trunk:")." ". $itemid : _("Add Balanced Trunk")); ?></h2>
 
@@ -98,6 +103,10 @@ if ($online_updates && $foo = trunkbalance_vercheck()) {
 		<input type="hidden" name="itemid" value="<?php echo $itemid; ?>">
 <?php		}?>
 
+	<tr>
+		<td><a href="#" class="info"><?php echo _("<b>Disable</b> Balanced Trunk $itemid:")?><span><?php echo _("If selected, this trunk is disabled and will not allow calls regardless of rules that follow")?></span></a></td>
+		<td><input type="checkbox"  name="disabled" <?php echo (($thisItem['disabled'] == "on") ? "checked" : "") ; ?> tabindex="<?php echo ++$tabindex;?>"></td>
+	</tr>
 	<tr>
 		<td><a href="#" class="info"><?php echo _("Trunk Description:")?><span><?php echo _("Enter a description for this balanced trunk.")?></span></a></td>
 		<td><input type="text" name="description" value="<?php echo (isset($thisItem['description']) ? $thisItem['description'] : ''); ?>" tabindex="<?php echo ++$tabindex;?>"></td>
@@ -218,13 +227,27 @@ if ($online_updates && $foo = trunkbalance_vercheck()) {
 		<td><a href="#" class="info"><?php echo _("Load Ratio:")?><span><?php echo _("Enter the ratio of calls that this trunk should accept. For instance to allow 1/3 of outbound calls to complete, you should enter 3 to let this trunk accept 1 out of 3 calls.")?></span></a></td>
 		<td><input type="number" name="loadratio" value="<?php echo (isset($thisItem['loadratio']) ? $thisItem['loadratio'] : ''); ?>" tabindex="<?php echo ++$tabindex;?>"></td>
 	</tr>
+
+	<tr><td colspan="2"><h5>URL Configuration<hr></h5></td></tr>
+	<tr>
+		<td><a href="#" class="info"><?php echo _("URL:")?><span><?php echo _("Enter a URL to load, substitute the string \$OUTNUM\$ in place of the outbound dialled digits.")?></span></a></td>
+		<td><textarea name="url" tabindex="<?php echo ++$tabindex;?>" style="width:250px;height:150px;"><?php echo (isset($thisItem['url']) ? $thisItem['url'] : ''); ?></textarea></td>
+	</tr>
+	<tr>
+		<td><a href="#" class="info"><?php echo _("URL Timeout:")?><span><?php echo _("Enter max seconds to wait for URL to respond.")?></span></a></td>
+		<td><input type="number" name="url_timeout" value="<?php echo (isset($thisItem['url_timeout']) ? $thisItem['url_timeout'] : ''); ?>" tabindex="<?php echo ++$tabindex;?>"></td>
+	</tr>
+	<tr>
+		<td><a href="#" class="info"><?php echo _("regex:")?><span><?php echo _("Enter PCRE regex with delimiters to search the URL contents, substitute the string \$OUTNUM\$ in place of the outbound dialled digits. Separate multiple regexs on each line")?></span></a></td>
+		<td><textarea name="regex" tabindex="<?php echo ++$tabindex;?>" style="width:250px;height:150px;"><?php echo (isset($thisItem['regex']) ? $thisItem['regex'] : ''); ?></textarea></td>
+		</tr>
 	<tr>
 		<td colspan="2"><br><h6><input name="submit" type="submit" value="<?php echo _("Submit Changes")?>" tabindex="<?php echo ++$tabindex;?>"></h6></td>		
 	</tr>
 </table>
 
 <p align="center" style="font-size:11px;"><br>
-The module is maintained by the developer community at the <a target="_blank" href="https://github.com/POSSA/freepbx-trunk-balancing"> PBX Open Source Software Alliance</a><br></p>
+Trunk Balance module verserion <?php echo $module_local[module][version]?> is maintained by the developer community at the <a target="_blank" href="https://github.com/POSSA/freepbx-trunk-balancing"> PBX Open Source Software Alliance</a><br></p>
 
 <script language="javascript">
 <!--
