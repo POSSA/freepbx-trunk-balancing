@@ -383,6 +383,20 @@ if (substr($name,0,4)=='BAL_') //balanced trunk
 					$channel_filter="dstchannel LIKE 'DAHDI/".$destrunk_channelid."%'";
 				}
 			break;
+			case 'custom':
+			$ParsParam = explode("/",$destrunk_channelid);
+			switch ($ParsParam[0])
+			{
+				case 'Dongle':
+					if ($count_inbound) {
+						$channel_filter="(dstchannel LIKE 'Dongle/".$ParsParam[1]."%' OR channel LIKE 'Dongle/".$ParsParam[1]."%')";
+					} else {
+						$channel_filter="dstchannel LIKE 'Dongle/".$ParsParam[1]."%'";
+					}
+				break;
+				default: $channel_filter="dstchannel LIKE '%".$destrunk_channelid."%'";
+			}
+			break;
 			default: $channel_filter=$destrunk_channelid;;
 		}
 		$db2 = new AGIDB($AGI);
@@ -461,9 +475,9 @@ if (substr($name,0,4)=='BAL_') //balanced trunk
 		//duration of call
 		if (($maxtime>0) and ($trunkallowed))
 			{
-			$sql='SELECT SUM(billsec) FROM `cdr` WHERE '.$disposition.' AND '.$channel_filter.' '.$sqldate.$sqlpattern;
+			$sql='SELECT SUM(ROUND((billsec/60)+0.5)) FROM `cdr` WHERE '.$disposition.' AND '.$channel_filter.' '.$sqldate.$sqlpattern;
 			$query= $db2->sql($sql,'NUM');
-			$numberofminutes=($query[0][0])/60; 
+			$numberofminutes=($query[0][0]); 
 			if ($maxtime>$numberofminutes)
 				{
 				$AGI->verbose("$maxtime max minutes. This trunk has now only $numberofminutes min. - Rule passed", 3);		
