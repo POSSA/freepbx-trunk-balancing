@@ -74,14 +74,15 @@ if ($action == 'delete') {
 			</form>";
 	
 
+// removed check for updates for 14+ compatibility
 // check to see if user has automatic updates enabled
-$cm =& cronmanager::create($db);
-$online_updates = $cm->updates_enabled() ? true : false;
+//$cm =& cronmanager::create($db);
+//$online_updates = $cm->updates_enabled() ? true : false;
 
 // check if new version of module is available
-if ($online_updates && $foo = trunkbalance_vercheck()) {
-	print "<br>A <b>new version</b> of this module is available from the <a target='_blank' href='http://pbxossa.org'>PBX Open Source Software Alliance</a><br>";
-	}
+//if ($online_updates && $foo = trunkbalance_vercheck()) {
+//	print "<br>A <b>new version</b> of this module is available from the <a target='_blank' href='http://pbxossa.org'>PBX Open Source Software Alliance</a><br>";
+//	}
 
 // get current verson of module
 $module_local = trunkbalance_xml2array("modules/trunkbalance/module.xml");
