@@ -1,5 +1,8 @@
 <?php
 
+define('module', $_SERVER['module']);
+define('version', $_SERVER['version']);
+
 isset($_REQUEST['action'])?$action = $_REQUEST['action']:$action='';
 
 //the item we are currently displaying
