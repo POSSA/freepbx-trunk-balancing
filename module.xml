@@ -1,7 +1,7 @@
 <module>
 	<rawname>trunkbalance</rawname>
 	<name>Trunk Balance</name>
-	<version>1.1.5</version>
+	<version>1.1.6</version>
 	<publisher>POSSA</publisher>
 	<license>GPLv2+</license>
 	<candisable>yes</candisable>
@@ -12,6 +12,7 @@
 		**** After installation check your balanced trunk definitions, particularly the Floating time. The time definition was changed from days to hours in version 1.1.0. ****
 	</attention>
 	<changelog>
+		*1.1.6* FreePBX 16 bug fix
 		*1.1.5* Added PJSIP support and improved counting minutes
 		*1.1.4* Remove auto check for updates
 		*1.1.2* Added trunk disable toggle
