@@ -158,16 +158,16 @@ class AGIDB {
 
   	// Determine DB type
 	if ($this->dbtype == 'mysql') {
-		$dbhandle = mysql_connect($this->dbhost, $this->dbuser, $this->dbpass);
+		$dbhandle = new mysqli($this->dbhost, $this->dbuser, $this->dbpass);
 		if (!$dbhandle) {
-			$this->errstr = 'SEVERE: AGI could not connect to MySQL Database. '.mysql_error();
+			$this->errstr = 'SEVERE: AGI could not connect to MySQL Database. '.$dbhandle->error;
 			debug ($this->errstr, 1);
 			return null;
 		}
 		$this->debug("Connected to MySQL database OK.", 4);
-		$selected = mysql_select_db($this->dbname, $dbhandle);
+		$selected = $dbhandle->select_db($this->dbname);
 		if (!$selected) {
-			$this->errstr = 'SEVERE: AGI could not select MySQL Database "'.$this->dbname.'" - '.mysql_error();
+			$this->errstr = 'SEVERE: AGI could not select MySQL Database "'.$this->dbname.'" - '.$dbhandle->error;
 			$this->debug($this->errstr, 1);
 			return null;
 		}
@@ -264,26 +264,26 @@ class AGIDB {
 
 	switch ($this->db) {
 		case "mysql":
-			$res = mysql_query($result, $this->dbhandle);
+			$res = $this->dbhandle->query($result);
 			if (!$res) {
-				$this->errstr = "MySQL Error: ".mysql_error()." with query $result";
+				$this->errstr = "MySQL Error: ".$dbhandle->error." with query $result";
 				$this->debug($this->errstr, 1);
 				return false;
 			}
 			// Loop through the returned result set, loading it into the array to return
 			// to the caller.
-			$this->numrows = mysql_num_rows($res);
+			$this->numrows = $res->num_rows;
 			// Return the correct type.
 			if ($type == "NONE") {
 				return true;
 			}
 			for ($i = 0; $i <= $this->numrows; $i++) {
 				if ($type == "NUM") {
-					$sqlresult[$i] = mysql_fetch_array($res, MYSQL_NUM);
+					$sqlresult[$i] = $res->fetch_array(MYSQLI_NUM);
 				} elseif ($type = "ASSOC") {
-					$sqlresult[$i] = mysql_fetch_array($res, MYSQL_ASSOC);
+					$sqlresult[$i] = $res->fetch_array(MYSQLI_ASSOC);
 				} else {
-					$sqlresult[$i] = mysql_fetch_array($res, MYSQL_BOTH);
+					$sqlresult[$i] = $res->fetch_array(MYSQLI_BOTH);
 				}
 			}
 			return $sqlresult;
@@ -585,7 +585,7 @@ class AGIDB {
 
 	switch ($this->db) {
 		case "mysql":
-			return mysql_real_escape_string($str, $this->dbhandle);
+			return $this->dbhandle->real_escape_string($str);
 		case "sqlite":
 		case "sqlite3":
 			// SQLite only needs to care about single ticks - "'". Escape
